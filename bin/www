@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
+//set environment variable
+require('dotenv').config();
+
 /**
  * Module dependencies.
  */
-
 var app = require('../app');
 var debug = require('debug')('back-end:server');
 var http = require('http');
@@ -25,9 +27,15 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, function () {
+  var port = server.address().port;
+  require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+      console.log('server listening at http://%s:%s', add, port);
+  })
+});
 server.on('error', onError);
 server.on('listening', onListening);
+
 
 /**
  * Normalize a port into a number, string, or false.
@@ -88,3 +96,4 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
